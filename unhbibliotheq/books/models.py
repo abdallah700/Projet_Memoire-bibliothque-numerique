@@ -1,9 +1,4 @@
 from django.db import models
-
-# Create your models here.
-
-
-from django.db import models
 from .models import Categorie_books, Utilisateur
 
 # Create your models here.
