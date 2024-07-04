@@ -1,0 +1,96 @@
+<!-- bookstore/templates/student/cancelled_reservation_list.html -->
+
+{% extends 'student/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container-fluid">
+    <h1>Cancelled Reservations</h1>
+    <form method="GET" action="">
+        <div class="input-group mb-3">
+            <input type="text" name="q" class="form-control" placeholder="Search..." value="{{ request.GET.q }}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table text-primary"></i>
+                    Historique Reservations
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+
+                                    <th>Book Title</th>
+                                    <th>Book Cover</th>
+                                    <th>User</th>
+                                    <th>Date Reserved</th>
+                                    <th>Date Cancelled</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if cancelled_reservations %}
+                                    {% for reservation in cancelled_reservations %}
+                                        <tr>
+                                            <td>{{ reservation.book.title }}</td>
+                                            <td>
+                                                {% if reservation.book.cover %}
+                                                    <img src="{{ reservation.book.cover.url }}" alt="{{ reservation.book.title }}" style="max-height: 100px;">
+                                                {% else %}
+                                                    No cover available
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ reservation.user.username }}</td>
+                                            <td>{{ reservation.added_at }}</td>
+                                            <td>{{ reservation.cancelled_at }}</td>
+                                            <td>
+                                                <a href="{% url 'delete_cancelled_reservation' reservation.pk %}" class="btn btn-danger">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7">No cancelled reservations found.</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+
+                        {% if is_paginated %}
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                                {% else %}
+                                    <li class="disabled"><span>&laquo;</span></li>
+                                {% endif %}
+                                {% for i in paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                                    {% else %}
+                                        <li><a href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                                {% else %}
+                                    <li class="disabled"><span>&raquo;</span></li>
+                                {% endif %}
+                            </ul>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

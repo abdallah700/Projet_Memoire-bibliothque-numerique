@@ -20,18 +20,18 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Reservation ID</th>
+
                                             <th>User</th>
                                             <th>Book Cover</th>
                                             <th>Book Title</th>
                                             <th>Date Reserved</th>
-                                            <th>End Date Reserved</th>
+                                            <th>Date Cancelled</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% for reservation in canceled_reservations %}
                                             <tr>
-                                                <td>{{ reservation.id }}</td>
                                                 <td>{{ reservation.user.username }}</td>
                                                 <td>
                                                     {% if reservation.book.cover %}
@@ -42,7 +42,13 @@
                                                 </td>
                                                 <td>{{ reservation.book.title }}</td>
                                                 <td>{{ reservation.added_at }}</td>
-                                                <td>{{ reservation.return_at }}</td>
+                                                <td>{{ reservation.cancelled_at }}</td>
+                                                <td>
+                                                    <form action="{% url 'delete_cancelled_reservation' reservation.pk %}" method="post">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

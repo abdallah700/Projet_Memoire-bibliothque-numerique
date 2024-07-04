@@ -10,7 +10,7 @@
             <div class="card mb-3">
                 <div class="card-header">
                     <i class="fas fa-table text-primary"></i>
-                    Recent Reserved Books
+                    Toutes les Réservations
                 </div>
                 <div class="card-body">
                     {% for message in messages %}
@@ -25,20 +25,18 @@
                                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
-                                            <th>Reservation ID</th>
-                                            <th>User</th>
-                                            <th>Book Cover</th>
-                                            <th>Book Title</th>
-                                            <th>Date Reserved</th>
-                                            <th>End Date Reserved</th>
-                                            <th>Delete</th>
+                                            <th>Utilisateur</th>
+                                            <th>Couverture du Livre</th>
+                                            <th>Titre du Livre</th>
+                                            <th>Heure Réservation</th>
+                                            <th>Heure Expiration</th>
+                                            <th>Annuler</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {% if reservations %}
                                             {% for reserve in reservations %}
                                                 <tr>
-                                                    <td>{{ reserve.id }}</td>
                                                     <td>{{ reserve.user.username }}</td>
                                                     <td>
                                                         {% if reserve.book.cover %}
@@ -50,19 +48,16 @@
                                                     <td>{{ reserve.book.title }}</td>
                                                     <td>{{ reserve.added_at }}</td>
                                                     <td>{{ reserve.expiration_date }}</td>
-
-                                                        <!-- bookstore/templates/dashboard/reservation_list.html -->
-                                                        <td>
-                                                            <a href="{% url 'adreservation' pk=reserve.pk %}">
-                                                                <button type="button" class="btn btn-danger">Annuler</button>
-                                                            </a>
-                                                        </td>
-
+                                                    <td>
+                                                        <a href="{% url 'cancel_reservation' reserve.pk %}">
+                                                            <button type="button" class="btn btn-danger">Annuler</button>
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             {% endfor %}
                                         {% else %}
                                             <tr>
-                                                <td colspan="7" class="text-center">No reservations found.</td>
+                                                <td colspan="7" class="text-center">Aucune réservation trouvée.</td>
                                             </tr>
                                         {% endif %}
                                     </tbody>

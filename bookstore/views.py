@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
@@ -5,7 +7,7 @@ from django.views import generic
 from bootstrap_modal_forms.mixins import PassRequestMixin
 from .models import User, Book, Chat, DeleteRequest, Feedback, Reservation, CancelledReservation
 from django.contrib import messages
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, ListView
 from .forms import ChatForm, BookForm, UserForm
 from . import models
@@ -509,17 +511,12 @@ class LCreateChat(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-
-
 class LListChat(LoginRequiredMixin, ListView):
     model = Chat
     template_name = 'librarian/chat_list.html'
 
     def get_queryset(self):
         return Chat.objects.filter(posted_at__lt=timezone.now()).order_by('posted_at')
-
-
-
 
 
 
@@ -540,62 +537,126 @@ class SBookListView(LoginRequiredMixin,ListView):
 @login_required
 def reserve_book(request, book_id):
     book = get_object_or_404(Book, id=book_id)
+    if Reservation.objects.filter(user=request.user, book=book, canceled=False).exists():
+        messages.error(request, "Vous avez déjà réservé ce livre.")
+        return redirect('student')
 
-    if book.nbr_exemplaire >= 1:
-        # Créer une nouvelle réservation
-        reservation = Reservation.objects.create(
-            user=request.user,
-            book=book
-        )
-        # Décrémenter le nombre d'exemplaires disponibles
+    if book.nbr_exemplaire > 0:
+        Reservation.objects.create(user=request.user, book=book)
         book.nbr_exemplaire -= 1
         book.save()
-        return redirect('user_reservations')
+        messages.success(request, "Réservation créée avec succès.")
     else:
-        # Afficher un message ou rediriger vers une page d'erreur
-        return render(request, 'reservation_error.html', {'message': 'Impossible de réserver ce livre.'})
+        messages.error(request, "Il n'y a plus d'exemplaires disponibles.")
 
+    return redirect('student')
 class ReservationDetailView(DetailView):
     model = Reservation
     template_name = 'student/reservation_detail.html'
 
 class UserReservationsListView(LoginRequiredMixin, ListView):
     model = Reservation
-    template_name = 'student/user_reservations.html'
+    template_name = 'student/list_reservations.html'
     context_object_name = 'reservations'
+    paginate_by = 4
 
     def get_queryset(self):
-        return Reservation.objects.filter(user=self.request.user).order_by('-added_at')
+        user = self.request.user
+        now = timezone.now()
+        expiration_time = now - timedelta(minutes=30)
+
+        # Annuler les réservations qui ont dépassé 30 minutes
+        expired_reservations = Reservation.objects.filter(user=user, added_at__lt=expiration_time, canceled=False)
+        for reservation in expired_reservations:
+            reservation.canceled = True
+            reservation.save()
+
+            # Ajouter l'historique d'annulation
+            CancelledReservation.objects.create(
+                user=reservation.user,
+                book=reservation.book,
+                added_at=reservation.added_at
+            )
+
+            # Incrémenter le nombre d'exemplaires disponibles
+            reservation.book.nbr_exemplaire += 1
+            reservation.book.save()
+
+        query = self.request.GET.get('q')
+        if query:
+            return Reservation.objects.filter(
+                Q(book__title__icontains=query) |
+                Q(added_at__icontains=query),
+                user=user,
+                canceled=False
+            ).order_by('-added_at')
+        return Reservation.objects.filter(user=user, canceled=False).order_by('-added_at')
 
 
+@login_required
+def cancel_reservation(request, pk):
+    reservation = get_object_or_404(Reservation, pk=pk)
+    if reservation.user == request.user:
+        reservation.canceled = True
+        reservation.save()
 
+        # Ajouter l'historique d'annulation
+        CancelledReservation.objects.create(
+            user=reservation.user,
+            book=reservation.book,
+            added_at=reservation.added_at
+        )
+
+        # Incrémenter le nombre d'exemplaires disponibles
+        reservation.book.nbr_exemplaire += 1
+        reservation.book.save()
+    return redirect('user_reservations')
+
+
+class CancelledReservationListView(LoginRequiredMixin, ListView):
+    model = CancelledReservation
+    template_name = 'student/cancelled_reservation_list.html'
+    context_object_name = 'cancelled_reservations'
+    paginate_by = 6
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
+        user = self.request.user
+        if query:
+            return CancelledReservation.objects.filter(
+                Q(book__title__icontains=query) |
+                Q(user__username__icontains=query) |
+                Q(added_at__icontains=query) |
+                Q(cancelled_at__icontains=query),
+                user=user
+            ).order_by('-cancelled_at')
+        return CancelledReservation.objects.filter(user=user).order_by('-cancelled_at')
+
+@login_required
+def delete_cancelled_reservation(request, pk):
+    reservation = get_object_or_404(CancelledReservation, pk=pk)
+    reservation.delete()
+    messages.success(request, "La réservation annulée a été supprimée avec succès.")
+    return redirect('cancelled_reservations')
 
 
 
 
 
 # Admin views
-
 def dashboard(request):
     book = Book.objects.all().count()
     user = User.objects.all().count()
     reservation = Reservation.objects.all().count()
-
     cancelledReservation = CancelledReservation.objects.all().count()
 
-
-
     context = {'book':book, 'user':user, 'reservation':reservation, 'cancelledReservation':cancelledReservation}
-
     return render(request, 'dashboard/home.html', context)
 
 def create_user_form(request):
     choice = ['1', '0', 'Publisher', 'Admin', 'Librarian', 'Student']
     choice = {'choice': choice}
-
     return render(request, 'dashboard/add_user.html', choice)
-
-
 class ADeleteUser(SuccessMessageMixin, DeleteView):
     model = User
     template_name='dashboard/confirm_delete3.html'
@@ -740,15 +801,13 @@ class AReservationListView(LoginRequiredMixin, ListView):
     model = Reservation
     template_name = 'dashboard/reservation_list.html'
     context_object_name = 'reservations'
-    paginate_by = 3
+    paginate_by = 4
 
     def get_queryset(self):
         now = timezone.now()
-        return Reservation.objects.filter(expiration_date__gte=now).order_by('-id')
+        return Reservation.objects.filter(canceled=False, expiration_date__gte=now).order_by('-id')
 
 
-
-# bookstore/views.py
 
 class ADeleteReservation(LoginRequiredMixin, DeleteView):
     model = Reservation
@@ -763,13 +822,17 @@ class ADeleteReservation(LoginRequiredMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 
-class CanceledReservationListView(ListView):
-    model = Reservation
+# bookstore/views.py
+
+class CanceledReservationListView(LoginRequiredMixin, ListView):
+    model = CancelledReservation
     template_name = 'dashboard/canceled_reservation_list.html'  # Template pour afficher les réservations annulées
     context_object_name = 'canceled_reservations'  # Nom du contexte à utiliser dans le template
 
     def get_queryset(self):
-        return Reservation.objects.filter(canceled=True).order_by('-added_at')
+        user = self.request.user
+        return CancelledReservation.objects.filter(user=user).order_by('-added_at')
+
 
 
 

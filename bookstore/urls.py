@@ -2,7 +2,7 @@ from django.urls import path, include
 from . import views
 from django.contrib.auth import views as auth_views
 
-
+from .views import delete_cancelled_reservation
 
 urlpatterns = [
 
@@ -50,15 +50,13 @@ urlpatterns = [
 
  # Student URL's
 
-path('Slbook/', views.SBookListView.as_view(), name='student'),
-
+ path('Slbook/', views.SBookListView.as_view(), name='student'),
  path('student/reserve<int:book_id>/', views.reserve_book, name='reserve_book'),
- path('reservation<int:pk>/', views.ReservationDetailView.as_view(), name='reservation_detail'),
- path('user/reservations/', views.UserReservationsListView.as_view(), name='user_reservations'),
-
-
-
-
+ path('student/reservations/', views.UserReservationsListView.as_view(), name='user_reservations'),
+ path('reservation/', views.ReservationDetailView.as_view(), name='reservation_detail'),
+ path('cancel_reservation/<int:pk>/', views.cancel_reservation, name='cancel_reservation'),
+ path('cancelled_reservations/', views.CancelledReservationListView.as_view(), name='cancelled_reservations'),
+path('cancelled-reservation/delete/<int:pk>/', delete_cancelled_reservation, name='delete_cancelled_reservation'),
 
  # Admin URL's
  path('dashboard/', views.dashboard, name='dashboard'),
@@ -68,7 +66,7 @@ path('Slbook/', views.SBookListView.as_view(), name='student'),
  path('aabook/', views.aabook, name='aabook'),
  path('albook/', views.ABookListView.as_view(), name='albook'),
 
- path('alreservation/', views.AReservationListView.as_view(), name='alreservation'),
+ path('alreservation/', views.AReservationListView.as_view(), name='allreservation'),
  path('adreservation/<int:pk>/', views.ADeleteReservation.as_view(), name='adreservation'),
  path('canceled_reservations/', views.CanceledReservationListView.as_view(), name='canceled_reservations'),
 

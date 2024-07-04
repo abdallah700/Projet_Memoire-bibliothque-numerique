@@ -52,6 +52,8 @@ class Reservation(models.Model):
     expiration_date = models.DateTimeField(null=True, blank=True)
     canceled = models.BooleanField(default=False)  # Champ pour indiquer si la réservation a été annulée
 
+    class Meta:
+        unique_together = ('user', 'book')
     def __str__(self):
         return str(self.added_at)
 

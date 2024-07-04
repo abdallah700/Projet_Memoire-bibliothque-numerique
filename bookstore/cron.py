@@ -23,3 +23,5 @@ class CancelExpiredReservations(CronJobBase):
             reservation.book.nbr_exemplaire += 1
             reservation.book.save()
             reservation.delete()
+
+
