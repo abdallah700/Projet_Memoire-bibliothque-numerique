@@ -1,0 +1,32 @@
+<!-- account/signin.html -->
+
+{% extends 'account/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block header %}
+  {% if messages %}
+    <div class="alert alert-danger">
+      {% for message in messages %}
+        {{ message }}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}
+
+{% block content %} 
+  <!-- contenu de visiteur.html -->
+  <h3>LoginForm Bibliothecaire</h3>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+  
+    <div class="table-responsive">
+      <table class="table">
+        {{ LoginBib_form.as_table }}
+      </table>
+      <div class="d-flex justify-content-end mt-3">
+        <button type="submit" class="btn btn-primary">Add</button>
+      </div>
+    </div>
+  </form>
+{% endblock %}

@@ -56,7 +56,13 @@ urlpatterns = [
  path('reservation/', views.ReservationDetailView.as_view(), name='reservation_detail'),
  path('cancel_reservation/<int:pk>/', views.cancel_reservation, name='cancel_reservation'),
  path('cancelled_reservations/', views.CancelledReservationListView.as_view(), name='cancelled_reservations'),
-path('cancelled-reservation/delete/<int:pk>/', delete_cancelled_reservation, name='delete_cancelled_reservation'),
+ path('cancelled-reservation/delete/<int:pk>/', delete_cancelled_reservation, name='delete_cancelled_reservation'),
+ path('scchat/', views.SCreateChat.as_view(), name='scchat'),
+ path('slchat/', views.SListChat.as_view(), name='slchat'),
+
+
+
+
 
  # Admin URL's
  path('dashboard/', views.dashboard, name='dashboard'),

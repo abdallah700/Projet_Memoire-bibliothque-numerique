@@ -42,14 +42,13 @@
                          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                             <tr>
-                                <th>Book ID</th>
+
                                 <th>Book Cover</th>
                                 <th>Book Title</th>
                                 <th>Book Exemplaire</th>
                                 <th>Reservation</th>
                                 <th>Read</th>
                                 <th>Download</th>
-                                <th>Panier</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -61,7 +60,7 @@
 
 
                                 <tr>
-                                  <td>{{ book.id }}</td>
+
                                   <td>
                                     {% if book.cover %}
                                     <img src="{{ book.cover.url }}" alt="{{ book.title}}" style="height: 100px; width: 100px">
@@ -96,10 +95,6 @@
                                     {% else %}
                                     <span class="text-muted">No PDF</span>
                                     {% endif %}
-                                  </td>
-                                    <td><a href="{% url 'reservation_detail' %}" class="btn btn-outline-success">Paniel</a></td>
-                                </tr>
-
 
                                 <!-- end for and if -->
                                 {% endfor %}

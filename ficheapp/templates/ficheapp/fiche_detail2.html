@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque Suivi</title>
+    <link rel="stylesheet" href="../../../static/styles3.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="../../../static/logo.jpg" alt="Logo" class="logo-image">
+            </div>
+            <div class="title">
+                <h1 style="font-family: Garamond, serif;">UNIVERSITE NOUVEAUX HORIZONS</h1>
+                <h2 style="font-family: Garamond, serif;">BIBLIOTHEQUE</h2>
+            </div>
+        </div>
+        <hr>
+        <div class="info">
+            <div class="personal-info">
+
+                <p><strong>N° Fiche :</strong> {{ fiche.numero_fiche }}</p>
+                <p><strong>Nom complet :</strong> {{ fiche.nom_complet }}</p>
+                <p><strong>Genre :</strong> {{ fiche.get_genre_display }}</p>
+                <p><strong>N° Téléphone :</strong> {{ fiche.telephone }}</p>
+                <p><strong>Année académique :</strong>
+                    <select id="annee_scolaire" onchange="updateSelectedOption()">
+                        <option value="fiche.html">2023-2024</option>
+                        <option value="fiche2.html">2024-2025</option>
+                        <!-- Add more options as needed -->
+                    </select>
+
+                </p>
+                <p><strong>Promotion & Filière :</strong> {{ fiche.promotion_filiere }}</p>
+
+            </div>
+            <div class="photo">
+                {% if fiche.photo_profil %}
+                    <img src="{{ fiche.photo_profil.url }}" alt="Photo" class="passport-photo">
+                {% else %}
+                    <p>Aucune photo de profil disponible.</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="controls">
+            <button class="rapport-button" onclick="location.href='rapport.html'">Rapport des Consultations</button>
+            <input type="text" id="searchBar" class="search-bar" placeholder="Rechercher...">
+            <div class="actions">
+            <a class="rapport-button" href="{% url 'fiche_list' %}">Retour à la liste des fiches</a>
+            <a class="rapport-button" href="{% url 'consultation_create' fiche.id %}">Ajouter une consultation</a>
+</div>
+        </div>
+        <h3>FICHE DE SUIVI DES CONSULTATIONS DANS LA BIBLIOTHEQUE</h3>
+        <div class="table-container">
+            {% if fiche.consultations.exists %}
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Cote Livre</th>
+                            <th>No Inventaire Livre</th>
+                            <th>Heure Début</th>
+                            <th>Heure Fin</th>
+                            <th>Nombre d'Heures</th>
+                            <th>Observations</th>
+                            <th>Domaine de Recherche</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for consultation in fiche.consultations.all %}
+                            <tr>
+                                <td>{{ consultation.get_type_consultation_display }}</td>
+                                <td>{{ consultation.date }}</td>
+                                <td>{{ consultation.cote_livre }}</td>
+                                <td>{{ consultation.no_inventaire_livre }}</td>
+                                <td>{{ consultation.heure_debut }}</td>
+                                <td>{{ consultation.heure_fin }}</td>
+                                <td>{{ consultation.nombre_heures }}</td>
+                                <td>{{ consultation.observations }}</td>
+                                <td>{{ consultation.domaine_recherche }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>Aucune consultation enregistrée pour cette fiche.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Function to update the selected option in localStorage and redirect
+        function updateSelectedOption() {
+            const selectedOption = document.getElementById('annee_scolaire').value;
+            localStorage.setItem('selectedAnneeScolaire', selectedOption);
+
+            // Redirect to the selected page
+            location.href = selectedOption;
+        }
+
+        // Function to set the selected option from localStorage
+        function setSelectedOption() {
+            const selectedOption = localStorage.getItem('selectedAnneeScolaire');
+            if (selectedOption) {
+                document.getElementById('annee_scolaire').value = selectedOption;
+            }
+        }
+
+        // Call the function to set the selected option on page load
+        window.onload = setSelectedOption;
+    </script>
+</body>
+</html>

@@ -640,6 +640,28 @@ def delete_cancelled_reservation(request, pk):
     return redirect('cancelled_reservations')
 
 
+class SCreateChat(LoginRequiredMixin, CreateView):
+    form_class = ChatForm
+    model = Chat
+    template_name = 'student/chat_form.html'
+    success_url = reverse_lazy('slchat')
+
+
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        self.object.user = self.request.user
+        self.object.save()
+        return super().form_valid(form)
+
+
+class SListChat(LoginRequiredMixin, ListView):
+    model = Chat
+    template_name = 'student/chat_list.html'
+
+    def get_queryset(self):
+        return Chat.objects.filter(posted_at__lt=timezone.now()).order_by('posted_at')
+
+
 
 
 

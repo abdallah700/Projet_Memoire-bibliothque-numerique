@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'bootstrap3',
     'django_forms_bootstrap',
     'django_cron',
+    'account',
+    'fiches',
+    'ficheapp',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +71,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bookapp.wsgi.application'
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases

@@ -1,0 +1,23 @@
+{% extends 'fiches/base.html' %}
+
+{% block content %}
+<!-- Formulaire de recherche -->
+<h2>Recherchez Un Abonné par Numéro de Fiche</h2>
+{% if error_message %}
+  <p style="color: red;">{{ error_message }}</p>
+{% endif %}
+<form method="post" action="{% url 'fiches:recherche-visiteur' %}">
+    {% csrf_token %}
+    <label for="numero_fiche">Numéro de Fiche :</label>
+    <input type="text" id="numero_fiche" name="numero_fiche" required>
+    <input type="submit" class="btn btn-primary" value="Rechercher">
+</form>
+
+<!-- Fin Formulaire de recherche -->
+
+<p>Nom: {{ type.nom_complet }}</p>
+<p>Email: {{ type.email }}</p>
+<img src="{{ photo_profil.url }}" alt="Photo de profil" style="width: 80px; height: 80px;">
+
+
+{% endblock %}

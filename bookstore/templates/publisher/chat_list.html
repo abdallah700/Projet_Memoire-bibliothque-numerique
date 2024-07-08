@@ -36,7 +36,9 @@
                 <small class="chat-user-special text-success"> {{ chat.user }}- Admin </small>
 
             {% elif chat.user.is_librarian %}
-                <small class="chat-user-special text-danger"> {{ chat.user }}- Librarian </small>    
+                <small class="chat-user-special text-danger"> {{ chat.user }}- Librarian </small>
+            {% elif chat.user.is_student %}
+                <small class="chat-user-special text-danger"> {{ chat.user }}- Student </small>
 
             {% else %}
 

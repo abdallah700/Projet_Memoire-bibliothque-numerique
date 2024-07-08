@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- Your custom title -->
+  <title>{% block title %}Votre Titre{% endblock %}</title>
+</head>
+<body>
+  <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+  <!-- Container wrapper -->
+  <div class="container-fluid">
+      <!-- Toggle button -->
+      <button
+          data-mdb-collapse-init
+          class="navbar-toggler"
+          type="button"
+          data-mdb-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+      >
+          <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Collapsible wrapper -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <!-- Navbar brand -->
+          <a class="navbar-brand mt-2 mt-lg-0" href="#">
+              <img
+                  src="D:\Cours\MCDProjet/UNH.png"
+                  height="15"
+                  loading="lazy"
+              />
+          </a>
+          <!-- Left links -->
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'fiches:detail-fiche' %}">Voir Les Details Fiche</a>
+              </li>
+
+              <li class="nav-item">
+                  <a class="nav-link" href="{% url 'fiches:recherche-visiteur' %}">Recherche et ajoute à la Fiche</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'fiches:import-excel' %}">Import Cotes Livres</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'fiches:import-discipline' %}">Import Domaines ou Discipline</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'fiches:statistiques_etudiants' 2024 3 %}">statistiques_etudiants</a>
+        </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/account">Ajouter un visiteur</a>
+            </li>
+            
+              <!-- Fin des nouveaux liens -->
+          </ul>
+          <!-- Left links -->
+      </div>
+      <!-- Collapsible wrapper -->
+  </div>
+  <!-- Container wrapper -->
+</nav>
+<!-- Navbar -->
+
+  <!-- Navbar -->
+  <div class="container mt-4">
+    {% block content %}{% endblock %}
+  </div>
+  <!-- Bootstrap JavaScript and Popper.js -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

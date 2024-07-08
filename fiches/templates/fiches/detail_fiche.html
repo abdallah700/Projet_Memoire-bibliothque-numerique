@@ -1,0 +1,66 @@
+{% extends 'fiches/base.html' %}
+{% block content %}
+
+<!-- Début Formulaire de recherche -->
+<div class="container mt-4">
+    <h2>Fiche de recommandation des Livres</h2>
+    <hr>
+    <form method="GET" action="{% url 'fiches:detail-fiche' %}">
+        <div class="mb-3">
+            <label for="numero_fiche" class="form-label">Recherche par Numéro de fiche :</label>
+            <input type="text" name="numero_fiche" id="numero_fiche" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="nom_complet" class="form-label">Recherche par Nom complet :</label>
+            <input type="text" name="nom_complet" id="nom_complet" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+</div>
+<!-- Fin Formulaire de recherche -->
+
+<!--Detail d'information Utilisateur-->
+<div class="container mt-4">
+    {% if instance %}
+      <h2>Détails de la fiche {{ instance.numero_fiche }}</h2>
+      <p>Email: {{ type_utl.email }}</p>
+      <p>Promotion: {{ type_utl.promotion }}</p>
+      <p>Faculté: {{ type_utl.faculte }}</p>
+      <p>Titre Academique: {{ type_utl.titre_academique }}</p>
+      <p>Sexe: {{ type_utl.genre }}</p>
+        <p>Fiche N°: {{ type_utl.numero_fiche }}</p>
+    {% if photo_profil %}
+            <img src="{{ photo_profil.url }}" alt="Photo de profil" style="width: 80px; height: 80px;">
+        {% else %}
+            <p>Aucune photo de profil disponible.</p>
+        {% endif %}
+        {% else %}
+        <p>Aucun résultat trouvé pour le numéro de fiche saisi.</p>
+        {% endif %}
+</div>
+<!-- Fin detail d'information Utilisateur -->
+
+<!-- Affichez les détails de la fiche ici -->
+    <hr>
+      <h2>Bibliotheque Physique</h2>
+      {% for consultation in histo %}
+      <hr>
+          <p>Cote du livre : {{ consultation.coteLivre.cote_livre }}</p>
+          <p>numero_inventaire_livre: {{ consultation.numero_inventaire_livre }}</p>
+          <p>Date: {{ consultation.date }}</p>
+          <P>observation: {% if consultation.observation == True %} Livre retourné{% else %} Livre non retourné {% endif %}</P>
+      {% endfor %}
+    <hr>
+
+<!-- Affichez les détails de la Bibliotheque Numerique ici -->
+  <div>
+      <h2>Bibliotheque Numerique</h2>
+      {% for consultationb in histonumerique %}
+      <hr>
+            <p>domaine_recherche: {{ consultationb.discipline.domaine_recherche }}</p>
+            <p>Date: {{ consultationb.date }}</p>
+      {% endfor %}
+    </div>
+  </div>
+<!-- Fin Affichez les détails de la fiche ici -->
+{% endblock %}

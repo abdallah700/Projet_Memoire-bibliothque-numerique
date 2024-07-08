@@ -1,0 +1,71 @@
+{% extends 'fiches/base.html' %}
+
+{% block content %}
+<!-- Formulaire de recherche -->
+<h2>Recherchez Un Abonne par Numéro de Fiche</h2>
+{% if error_message %}
+  <p style="color: red;">{{ error_message }}</p>
+{% endif %}
+<form method="post" action="{% url 'fiches:recherche-visiteur' %}">
+    {% csrf_token %}
+    <label for="numero_fiche">Numéro de Fiche :</label>
+    <input type="text" id="numero_fiche" name="numero_fiche" required>
+    <input type="submit" value="Rechercher">
+</form>
+<!-- Fin Formulaire de recherche -->
+
+<p>Nom: {{ type.nom_complet }}</p>
+<p>Email: {{ type.email }}</p>
+{% if photo_profil %}
+    <img src="{{ photo_profil }}" alt="Photo de profil" style="width: 80px; height: 80px;">
+{% else %}
+    <p>Aucune photo de profil disponible</p>
+{% endif %}
+<hr>
+<h2>Ajoutez les Informations Journalières</h2>
+<hr>
+<h2>Bibliotheque Physique</h2>
+<form method="post" action="{% url 'fiches:ajouter-informations-quotidiennes' visiteur_id=visiteur.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="visiteur_id" value="{{ visiteur.numero_fiche }}">
+    <!-- Ajoutez d'autres champs selon vos besoins -->
+
+    <label for="numero_inventaire">Numéro d'Inventaire :</label>
+    <input type="text" id="numero_inventaire" name="numero_inventaire" required>
+    <br>
+    <label for="cote_livre">Cote du Livre :</label>
+    <select id="cote_livre" name="cote_livre" required>
+      <option value="">Sélectionnez cote du Livre</option>
+      {% for cote in cotes_livres %}
+        <option value="{{ cote.id }}">{{ cote.cote_livre }}</option>
+      {% endfor %}
+    </select>
+    <br>
+    <label for="date">Date :</label>
+    <input type="date" id="date" name="date" required>
+    <br>
+    <label for="observation">observation: </label>
+    <input type="checkbox" id="observation" name="observation"><br>
+    <input type="submit" value="Ajouter Informations Quotidiennes">
+</form>
+
+<hr>
+<h2>Bibliotheque Numerique</h2>
+<form method="post" action="{% url 'fiches:bibliotheque-numerique' visiteur_id=visiteur.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="visiteur_id" value="{{ visiteur.numero_fiche }}">
+    <!-- Ajoutez d'autres champs selon vos besoins -->
+    <label for="discipline">Domaine :</label>
+    <select id="discipline" name="discipline" required>
+        <option value="">Sélectionnez une discipline</option>
+        {% for discipline in disciplines %}
+            <option value="{{ discipline.id }}">{{ discipline.domaine_recherche }}</option>
+        {% endfor %}
+    </select>
+    <br>
+    <label for="date">Date :</label>
+    <input type="date" id="date" name="date" required>
+    <br>
+    <input type="submit" value="Ajouter Informations Quotidiennes">
+</form>
+{% endblock %}
