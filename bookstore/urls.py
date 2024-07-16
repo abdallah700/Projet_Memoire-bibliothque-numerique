@@ -37,6 +37,7 @@ urlpatterns = [
  path('publisher/', views.UBookListView.as_view(), name='publisher'),
  path('uabook_form/', views.uabook_form, name='uabook_form'),
  path('uabook/', views.uabook, name='uabook'),
+
  path('ucchat/', views.UCreateChat.as_view(), name='ucchat'),
  path('ulchat/', views.UListChat.as_view(), name='ulchat'),
  path('request_form/', views.request_form, name='request_form'),
@@ -46,10 +47,9 @@ urlpatterns = [
  path('about/', views.about, name='about'),
  path('usearch/', views.usearch, name='usearch'),
 
-
+ path('import-excel/', views.importExcel, name='import_excel'),
 
  # Student URL's
-
  path('Slbook/', views.SBookListView.as_view(), name='student'),
  path('student/reserve<int:book_id>/', views.reserve_book, name='reserve_book'),
  path('student/reservations/', views.UserReservationsListView.as_view(), name='user_reservations'),
@@ -59,7 +59,7 @@ urlpatterns = [
  path('cancelled-reservation/delete/<int:pk>/', delete_cancelled_reservation, name='delete_cancelled_reservation'),
  path('scchat/', views.SCreateChat.as_view(), name='scchat'),
  path('slchat/', views.SListChat.as_view(), name='slchat'),
-
+ path('about/', views.Sabout, name='ssabout'),
 
 
 

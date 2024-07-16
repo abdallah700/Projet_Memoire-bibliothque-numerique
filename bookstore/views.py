@@ -1,11 +1,12 @@
 from datetime import timedelta
-
 from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views import generic
 from bootstrap_modal_forms.mixins import PassRequestMixin
-from .models import User, Book, Chat, DeleteRequest, Feedback, Reservation, CancelledReservation
+from tablib import Dataset
+from fiches.resources import CoteLivreResource
+from .models import User, Book, Chat, DeleteRequest, Feedback, Reservation, CancelledReservation, CoteLivre
 from django.contrib import messages
 from django.db.models import Sum, Q
 from django.views.generic import CreateView, DetailView, DeleteView, UpdateView, ListView
@@ -18,10 +19,13 @@ from django.contrib.auth import authenticate, logout
 from django.contrib import auth, messages
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-
-
+from django.shortcuts import render, redirect
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from tablib import Dataset
+from .models import CoteLivre
 
 
 # Shared Views
@@ -45,10 +49,10 @@ def loginView(request):
                 return redirect('dashboard')
             elif user.is_librarian:
                 return redirect('librarian')
-            elif user.is_student:
-                return redirect('student')
-            else:
+            elif user.is_publisher:
                 return redirect('publisher')
+            else:
+                return redirect('student')
 
         else:
             messages.info(request, "Invalid username or password")
@@ -81,20 +85,6 @@ def registerView(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Publisher views
 @login_required
 def publisher(request):
@@ -103,7 +93,8 @@ def publisher(request):
 
 @login_required
 def uabook_form(request):
-    return render(request, 'publisher/add_book.html')
+    cotes = CoteLivre.objects.all()
+    return render(request, 'publisher/add_book.html', {'cotes': cotes})
 
 
 @login_required
@@ -226,23 +217,28 @@ def send_feedback(request):
 
 
 
+@login_required
+def importExcel(request):
+    if request.method == 'POST':
+        dataset = Dataset()
+        new_coteLivre = request.FILES.get('my_file')
 
+        if not new_coteLivre:
+            messages.error(request, 'Please upload a file.')
+            return render(request, 'publisher/impExp.html')
 
+        try:
+            imported_data = dataset.load(new_coteLivre.read(), format='xlsx')
+            for data in imported_data.dict:
+                CoteLivre.objects.update_or_create(
+                    cote_livre=data['cote_livre'],
+                    defaults={'nb_selections': data['nb_selections']}
+                )
+            messages.success(request, 'Data imported successfully.')
+        except Exception as e:
+            messages.error(request, f'Error importing data: {e}')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return render(request, 'publisher/impExp.html')
 
 
 class UBookListView(LoginRequiredMixin,ListView):
@@ -260,7 +256,8 @@ def uabook(request):
         title = request.POST['title']
         author = request.POST['author']
         nbr_exemplaire = request.POST['nbr_exemplaire']
-        cote_book = request.POST['cote_book']
+        cote_book_id = request.POST['cote_book']
+        cote_book = CoteLivre.objects.get(id=cote_book_id)
         num_invetaire = request.POST['num_invetaire']
         year = request.POST['year']
         publisher = request.POST['publisher']
@@ -271,14 +268,27 @@ def uabook(request):
         user_id = current_user.id
         username = current_user.username
 
-        a = Book(title=title, author=author, nbr_exemplaire=nbr_exemplaire, cote_book=cote_book, num_invetaire=num_invetaire, year=year, publisher=publisher,
-            desc=desc, cover=cover, pdf=pdf, uploaded_by=username, user_id=user_id)
+        a = Book(
+            title=title,
+            author=author,
+            nbr_exemplaire=nbr_exemplaire,
+            cote_book=cote_book,
+            num_invetaire=num_invetaire,
+            year=year,
+            publisher=publisher,
+            desc=desc,
+            cover=cover,
+            pdf=pdf,
+            uploaded_by=username,
+            user_id=user_id
+        )
         a.save()
         messages.success(request, 'Book was uploaded successfully')
         return redirect('publisher')
     else:
-        messages.error(request, 'Book was not uploaded successfully')
-        return redirect('uabook_form')
+        cotes = CoteLivre.objects.all()  # Assurez-vous que cette ligne récupère bien les données
+        print("Cotes:", cotes)
+        return render(request, 'publisher/add_book.html', {'cotes': cotes})
 
 
 
@@ -310,29 +320,6 @@ class UListChat(LoginRequiredMixin, ListView):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Librarian views
 def librarian(request):
     book = Book.objects.all().count()
@@ -345,7 +332,8 @@ def librarian(request):
 
 @login_required
 def labook_form(request):
-    return render(request, 'librarian/add_book.html')
+    cotes = CoteLivre.objects.all()
+    return render(request, 'librarian/add_book.html', {'cotes': cotes})
 
 
 @login_required
@@ -354,7 +342,8 @@ def labook(request):
         title = request.POST['title']
         author = request.POST['author']
         nbr_exemplaire = request.POST['nbr_exemplaire']
-        cote_book = request.POST['cote_book']
+        cote_book_id = request.POST['cote_book']
+        cote_book = CoteLivre.objects.get(id=cote_book_id)
         num_invetaire = request.POST['num_invetaire']
         year = request.POST['year']
         publisher = request.POST['publisher']
@@ -661,6 +650,8 @@ class SListChat(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Chat.objects.filter(posted_at__lt=timezone.now()).order_by('posted_at')
 
+def Sabout(request):
+    return render(request, 'student/about.html')
 
 
 
@@ -777,7 +768,8 @@ class AListChat(LoginRequiredMixin, ListView):
 
 @login_required
 def aabook_form(request):
-    return render(request, 'dashboard/add_book.html')
+    cotes = CoteLivre.objects.all()
+    return render(request, 'dashboard/add_book.html', {'cotes': cotes})
 
 
 @login_required
@@ -786,9 +778,9 @@ def aabook(request):
         title = request.POST['title']
         author = request.POST['author']
         nbr_exemplaire = request.POST['nbr_exemplaire']
-        cote_book = request.POST['cote_book']
+        cote_book_id = request.POST['cote_book']
+        cote_book = CoteLivre.objects.get(id=cote_book_id)
         num_invetaire = request.POST['num_invetaire']
-
         year = request.POST['year']
         publisher = request.POST['publisher']
         desc = request.POST['desc']

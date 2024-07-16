@@ -43,9 +43,10 @@
                          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                             <tr>
-                                <th>Book ID</th>
+
                                 <th>Book Cover</th>
                                 <th>Book Title</th>
+                                 <th>Cote Book</th>
                                 <th>Book Exemplaire</th>
                                 <th>Read</th>
                                 <th>Download</th>
@@ -57,10 +58,8 @@
                            <!-- if and for -->
                            {% if books %}
                            {% for book in books %}
-
                         
                                 <tr>
-                                  <td>{{ book.id }}</td>
                                   <td>
                                     {% if book.cover %}
                                     <img src="{{ book.cover.url }}" alt="{{ book.title}}" style="height: 100px; width: 100px">
@@ -69,6 +68,7 @@
                                     {% endif %}
                                    </td>
                                   <td>{{ book.title }}</td>
+                                     <td>{{ book.cote_book }}</td>
                                     <td>{{ book.nbr_exemplaire }}</td>
                                     <td>
                                         {% if book.pdf %}

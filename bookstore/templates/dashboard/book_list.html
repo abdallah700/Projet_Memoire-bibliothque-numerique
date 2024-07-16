@@ -36,9 +36,10 @@
                          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                             <thead>
                             <tr>
-                                <th>Book ID</th>
+
                                 <th>Book Cover</th>
                                 <th>Book Title</th>
+                                <th>Cote Book</th>
                                 <th>Book Exemplaire</th>
                                 <th>Read</th>
                                 <th>Download</th>
@@ -52,7 +53,6 @@
 
                         
                                 <tr>
-                                  <td>{{ book.id }}</td>
                                   <td>
                                     {% if book.cover %}
                                     <img src="{{ book.cover.url }}" alt="{{ book.title }}" style="width:100px; height: 100px">
@@ -63,6 +63,7 @@
 
                                   
                                   <td>{{ book.title }}</td>
+                                     <td>{{ book.cote_book }}</td>
                                   <td>{{ book.nbr_exemplaire }}</td>
                                     <td>
                                     {% if book.pdf %}

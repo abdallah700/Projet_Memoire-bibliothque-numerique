@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bibliothèque Suivi</title>
     <link rel="stylesheet" href="../../../static/styles3.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -20,7 +21,6 @@
         <hr>
         <div class="info">
             <div class="personal-info">
-
                 <p><strong>N° Fiche :</strong> {{ fiche.numero_fiche }}</p>
                 <p><strong>Nom complet :</strong> {{ fiche.nom_complet }}</p>
                 <p><strong>Genre :</strong> {{ fiche.get_genre_display }}</p>
@@ -31,10 +31,8 @@
                         <option value="fiche2.html">2024-2025</option>
                         <!-- Add more options as needed -->
                     </select>
-
                 </p>
                 <p><strong>Promotion & Filière :</strong> {{ fiche.promotion_filiere }}</p>
-
             </div>
             <div class="photo">
                 {% if fiche.photo_profil %}
@@ -45,17 +43,17 @@
             </div>
         </div>
         <div class="controls">
-            <button class="rapport-button" onclick="location.href='rapport.html'">Rapport des Consultations</button>
-            <input type="text" id="searchBar" class="search-bar" placeholder="Rechercher...">
+            <button id="printButton" class="rapport-button">Imprimer la fiche</button>
+            <input type="text" id="searchBar" class="search-bar" placeholder="Rechercher..." onkeyup="searchConsultations()">
             <div class="actions">
-            <a class="rapport-button" href="{% url 'fiche_list' %}">Retour à la liste des fiches</a>
-            <a class="rapport-button" href="{% url 'consultation_create' fiche.id %}">Ajouter une consultation</a>
-</div>
+                <a class="rapport-button" href="{% url 'fiche_list' %}">Retour à la liste des fiches</a>
+                <a class="rapport-button" href="{% url 'consultation_create' fiche.id %}">Ajouter une consultation</a>
+            </div>
         </div>
         <h3>FICHE DE SUIVI DES CONSULTATIONS DANS LA BIBLIOTHEQUE</h3>
         <div class="table-container">
             {% if fiche.consultations.exists %}
-                <table class="styled-table">
+                <table id="consultationsTable" class="styled-table">
                     <thead>
                         <tr>
                             <th>Type</th>
@@ -91,6 +89,11 @@
         </div>
     </div>
 
+    <h2>Statistiques des Consultations</h2>
+    <div class="chart-container">
+        <canvas id="consultationChart"></canvas>
+    </div>
+
     <script>
         // Function to update the selected option in localStorage and redirect
         function updateSelectedOption() {
@@ -111,6 +114,83 @@
 
         // Call the function to set the selected option on page load
         window.onload = setSelectedOption;
+
+        // Data from Django context
+        const labels = {{ consultation_labels|safe }};
+        const data = {{ consultation_data|safe }};
+        const dataPhysique = {{ consultation_data_physique|safe }};
+        const dataNumerique = {{ consultation_data_numerique|safe }};
+
+        // Create the chart
+        const ctx = document.getElementById('consultationChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Total Consultations',
+                        data: data,
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Consultations Physiques',
+                        data: dataPhysique,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Consultations Numériques',
+                        data: dataNumerique,
+                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Function to search consultations
+        function searchConsultations() {
+            const input = document.getElementById('searchBar');
+            const filter = input.value.toLowerCase();
+            const table = document.getElementById('consultationsTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName('td');
+                let match = false;
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j]) {
+                        const textValue = cells[j].textContent || cells[j].innerText;
+                        if (textValue.toLowerCase().indexOf(filter) > -1) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+                if (match) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+        }
+
+        // Function to print the fiche
+        document.getElementById('printButton').onclick = function() {
+            window.print();
+        };
     </script>
 </body>
 </html>

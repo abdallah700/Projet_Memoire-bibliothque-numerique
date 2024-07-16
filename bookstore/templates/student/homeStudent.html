@@ -45,6 +45,7 @@
 
                                 <th>Book Cover</th>
                                 <th>Book Title</th>
+                                <th>Cote Book</th>
                                 <th>Book Exemplaire</th>
                                 <th>Reservation</th>
                                 <th>Read</th>
@@ -68,7 +69,8 @@
                                     <span class="text-muted">No Cover</span>
                                     {% endif %}
                                    </td>
-                                  <td>{{ book.title }}</td>
+                                  <td>{{ book.title }} </td>
+                                    <td>{{ book.cote_book }}</td>
                                     <td>{{ book.nbr_exemplaire }}</td>
                                 <!-- Votre template, par exemple book_detail.html -->
                                 <td>

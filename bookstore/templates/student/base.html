@@ -32,9 +32,7 @@
             <li class="nav-item"><a class="nav-link" href="{% url 'user_reservations' %}"><i class="fa fa-book"></i> Réservation</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'cancelled_reservations' %}"><i class="fa fa-history"></i> Historique</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'slchat' %}"><i class="fa fa-comments"></i> Groupe Chat</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'request_form' %}"><i class="fa fa-trash"></i> Demande de Suppression</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'feedback_form' %}"><i class="fa fa-envelope"></i> Envoyer un Feedback</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}"><i class="fa fa-info-circle"></i> À Propos de Nous</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'ssabout' %}"><i class="fa fa-info-circle"></i> À Propos de Nous</a></li>
         </ul>
     </div>
     <!-- Navbar Search -->
@@ -70,12 +68,12 @@
         <div class="sidebar-heading">E-BookUNH</div>
         <div class="list-group list-group-flush">
             <a href="{% url 'student' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-home"></i> Accueil</a>
+            <a href="{% url 'student' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-home"></i> Accueil</a>
             <a href="{% url 'user_reservations' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-book"></i> Réservation</a>
             <a href="{% url 'cancelled_reservations' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-history"></i> Historique</a>
             <a href="{% url 'slchat' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-comments"></i> Groupe Chat</a>
-            <a href="{% url 'request_form' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-trash"></i> Demande de Suppression</a>
-            <a href="{% url 'feedback_form' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-envelope"></i> Envoyer un Feedback</a>
-            <a href="{% url 'about' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-info-circle"></i> À Propos de Nous</a>
+
+            <a href="{% url 'ssabout' %}" class="list-group-item list-group-item-action bg-light"><i class="fa fa-info-circle"></i> À Propos de Nous</a>
         </div>
     </div>
 

@@ -1,10 +1,10 @@
 from django import forms
-from .models import Fiche, Consultation
+from .models import Fiche, Consultation, CoteLivre, Discipline
 
 class FicheForm(forms.ModelForm):
     class Meta:
         model = Fiche
-        fields = ['nom_complet', 'genre', 'telephone', 'annee_academique', 'promotion_filiere', 'photo_profil', 'numero_fiche']  # Ajout du champ numero_fiche
+        fields = ['nom_complet', 'genre', 'telephone', 'annee_academique', 'promotion_filiere', 'photo_profil', 'numero_fiche']
         widgets = {
             'genre': forms.Select(choices=Fiche.GENRE_CHOICES),
         }
@@ -23,8 +23,14 @@ class ConsultationForm(forms.ModelForm):
             'heure_fin': forms.TimeInput(attrs={'type': 'time'}),
             'nombre_heures': forms.TimeInput(attrs={'type': 'time'}),
             'observations': forms.CheckboxInput(),
-            'domaine_recherche': forms.Textarea(attrs={'rows': 3}),
+            'domaine_recherche': forms.Select(),
+            'cote_livre': forms.Select(),
         }
+
+    def __init__(self, *args, **kwargs):
+        super(ConsultationForm, self).__init__(*args, **kwargs)
+        self.fields['cote_livre'].queryset = CoteLivre.objects.all()
+        self.fields['domaine_recherche'].queryset = Discipline.objects.all()
 
     def clean(self):
         cleaned_data = super().clean()
@@ -35,3 +41,13 @@ class ConsultationForm(forms.ModelForm):
             raise forms.ValidationError("L'heure de début doit être avant l'heure de fin.")
 
         return cleaned_data
+
+    class CoteLivreForm(forms.Form):
+        class meta:
+            model = CoteLivre
+            fields = '__all__'
+
+    class DisciplineForm(forms.Form):
+        class meta:
+            model = Discipline
+            fields = '__all__'

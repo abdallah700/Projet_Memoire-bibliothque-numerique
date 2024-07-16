@@ -25,8 +25,16 @@
             <div class="col"><input type="number" class="form-control" name="nbr_exemplaire" placeholder="Nombre Exemplaire" required="required" step="1" min="0"></div>
         </div>
 
+<!-- Liste déroulante pour Cote Book -->
         <div class="form-group">
-                <div class="col"><input type="text" class="form-control" name="cote_book" placeholder="Cote Book" required="required"></div>
+            <div class="col">
+                <select id="cote_book" class="form-control" name="cote_book" required="required">
+                    <option value="" disabled selected>Select Cote Book</option>
+                    {% for cote in cotes %}
+                    <option value="{{ cote.id }}">{{ cote.cote_livre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
 
         <div class="form-group">

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 30%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Statistiques Mensuelles des Consultations</h1>
+    <div id="charts-container">
+        {% for promotion, data in stats.items %}
+            <h2>Promotion: {{ promotion }}</h2>
+            <p>Total Hommes: {{ data.total_M }}</p>
+            <p>Total Femmes: {{ data.total_F }}</p>
+            <div class="chart-container">
+                <canvas id="chart-{{ promotion|slugify }}"></canvas>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const ctx = document.getElementById('chart-{{ promotion|slugify }}').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: {{ labels|safe }},
+                            datasets: [
+                                {
+                                    label: 'Hommes',
+                                    data: {{ data.M|safe }},
+                                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Femmes',
+                                    data: {{ data.F|safe }},
+                                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                    borderColor: 'rgba(255, 99, 132, 1)',
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                });
+            </script>
+        {% endfor %}
+    </div>
+{% endblock %}
