@@ -1,0 +1,58 @@
+<!-- bookstore/templates/student/reservation_detail.html -->
+
+{% extends 'student/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <div class="col-12 mb-3">
+                <div id="content-wrapper">
+                    <div class="container-fluid">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href=""><h1>Réservation</h1></a>
+                        </ol>
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <i class="fas fa-table text-warning"></i>
+                                Details Of Book
+                            </div>
+                            <div class="card-body">
+                                {% for message in messages %}
+                                    <div class="alert alert-{{ message.tags }} alert-dismissible" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <ul class="list-group">
+                                            <li class="list-group-item"><strong>Utilisateur :</strong> {{ reservation.user.username }}</li>
+                                            <li class="list-group-item"><strong>Book :</strong> {{ reservation.book.title }}</li>
+                                            <li class="list-group-item"><strong>Date de réservation :</strong> {{ reservation.added_at }}</li>
+                                            <li class="list-group-item"><strong>Date de retour :</strong> {{ reservation.expiration_date }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="row top-buffer" style="padding-top: 10px">
+                                    <div class="col-12">
+                                        <a href="{% url 'cancel_reservation' reservation.pk %}">
+                                            <button type="button" class="btn btn-danger">Cancel</button>
+                                        </a>
+                                        <a href="{% url 'student' %}">
+                                            <button type="button" class="btn btn-success">Back</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

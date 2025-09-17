@@ -1,0 +1,65 @@
+<!-- bookstore/templates/dashboard/canceled_reservation_list.html -->
+
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container-fluid">
+    <div class="row" style="padding-top: 30px">
+        <div class="col-sm-1" style="color: red"></div>
+        <div class="col-sm-10">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table text-primary"></i>
+                    Canceled Reservations
+                </div>
+                <div class="card-body">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+
+                                            <th>User</th>
+                                            <th>Book Cover</th>
+                                            <th>Book Title</th>
+                                            <th>Date Reserved</th>
+                                            <th>Date Cancelled</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for reservation in canceled_reservations %}
+                                            <tr>
+                                                <td>{{ reservation.user.username }}</td>
+                                                <td>
+                                                    {% if reservation.book.cover %}
+                                                        <img src="{{ reservation.book.cover.url }}" alt="{{ reservation.book.title }}" style="width:100px; height: 100px">
+                                                    {% else %}
+                                                        <span class="text-muted">No cover</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ reservation.book.title }}</td>
+                                                <td>{{ reservation.added_at }}</td>
+                                                <td>{{ reservation.cancelled_at }}</td>
+                                                <td>
+                                                    <form action="{% url 'delete_cancelled_reservation' reservation.pk %}" method="post">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1"></div>
+    </div>
+</div>
+{% endblock %}

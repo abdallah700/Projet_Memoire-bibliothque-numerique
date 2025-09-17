@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques</title>
+</head>
+<body>
+    <h1>Statistiques</h1>
+
+    <h2>Statistiques Bibliothèque Physique</h2>
+    <table style="border=1">
+        <tr>
+            <th>Faculté</th>
+            <th>Promotion</th>
+            <th>Nombre d'hommes</th>
+            <th>Nombre de femmes</th>
+        </tr>
+        {% for faculte, promotions in statistiques_physique.items %}
+            {% for promotion, stats in promotions.items %}
+                <tr>
+                    <td>{{ faculte }}</td>
+                    <td>{{ promotion }}</td>
+                    <td>{{ stats.0 }}</td>
+                    <td>{{ stats.1 }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+
+    <h2>Statistiques Bibliothèque Numérique</h2>
+    <table style="border=1">
+        <tr>
+            <th>Faculté</th>
+            <th>Promotion</th>
+            <th>Nombre d'hommes</th>
+            <th>Nombre de femmes</th>
+        </tr>
+        {% for faculte, promotions in statistiques_numerique.items %}
+            {% for promotion, stats in promotions.items %}
+                <tr>
+                    <td>{{ faculte }}</td>
+                    <td>{{ promotion }}</td>
+                    <td>{{ stats.0 }}</td>
+                    <td>{{ stats.1 }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    </table>
+
+    <h2>Statistiques Personnes Externes</h2>
+    <h3>Bibliothèque Physique</h3>
+    <p>Hommes: {{ stat_physique_externe.homme }}</p>
+    <p>Femmes: {{ stat_physique_externe.femme }}</p>
+
+    <h3>Bibliothèque Numérique</h3>
+    <p>Hommes: {{ stat_numerique_externe.homme }}</p>
+    <p>Femmes: {{ stat_numerique_externe.femme }}</p>
+
+    <h2>Totaux par Faculté</h2>
+    <table style="border=1">
+        <tr>
+            <th>Faculté</th>
+            <th>Physique (Hommes)</th>
+            <th>Physique (Femmes)</th>
+            <th>Numérique (Hommes)</th>
+            <th>Numérique (Femmes)</th>
+        </tr>
+        {% for faculte, stats in total_par_faculte.items %}
+            <tr>
+                <td>{{ faculte }}</td>
+                <td>{{ stats.physique.homme }}</td>
+                <td>{{ stats.physique.femme }}</td>
+                <td>{{ stats.numerique.homme }}</td>
+                <td>{{ stats.numerique.femme }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Total Général</h2>
+    <table style="border=1">
+        <tr>
+            <th>Bibliothèque</th>
+            <th>Hommes</th>
+            <th>Femmes</th>
+        </tr>
+        <tr>
+            <td>Physique</td>
+            <td>{{ total_general.physique.homme }}</td>
+            <td>{{ total_general.physique.femme }}</td>
+        </tr>
+        <tr>
+            <td>Numérique</td>
+            <td>{{ total_general.numerique.homme }}</td>
+            <td>{{ total_general.numerique.femme }}</td>
+        </tr>
+    </table>
+</body>
+</html>

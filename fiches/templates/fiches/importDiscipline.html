@@ -1,0 +1,13 @@
+{% extends 'fiches/base.html' %}
+{% block content %}
+
+
+<h2>Update Domaines ou Disciplines Livres</h2>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="discipline">Import Disciplines ou Domaines de Livres :</label>
+    <input type="file" name="my_file" />  <!-- Mettez à jour le nom du champ ici -->
+    <button type="submit">Upload</button>
+</form>
+
+{% endblock %}

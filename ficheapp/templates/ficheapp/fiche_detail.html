@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Détails de la fiche</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .fiche-info, .consultations {
+            margin-bottom: 20px;
+        }
+        .consultations table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .actions a {
+            text-decoration: none;
+            color: #007BFF;
+            margin-right: 10px;
+        }
+        .profile-img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<h1>Détails de la fiche</h1>
+
+<div class="actions">
+    <a href="{% url 'fiche_list' %}">Retour à la liste des fiches</a>
+    <a href="{% url 'consultation_create' fiche.id %}">Ajouter une consultation</a>
+</div>
+
+<div class="fiche-info">
+    <h2>Informations sur la fiche</h2>
+    {% if fiche.photo_profil %}
+        <img src="{{ fiche.photo_profil.url }}" alt="Photo de profil" class="profile-img">
+    {% else %}
+        <p>Aucune photo de profil disponible.</p>
+    {% endif %}
+    <p><strong>Nom complet:</strong> {{ fiche.nom_complet }}</p>
+    <p><strong>Genre:</strong> {{ fiche.get_genre_display }}</p>
+    <p><strong>Téléphone:</strong> {{ fiche.telephone }}</p>
+    <p><strong>Année académique:</strong> {{ fiche.annee_academique }}</p>
+    <p><strong>Promotion & Filière:</strong> {{ fiche.promotion_filiere }}</p>
+</div>
+
+<div class="consultations">
+    <h2>Consultations</h2>
+    {% if fiche.consultations.exists %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Cote Livre</th>
+                    <th>No Inventaire Livre</th>
+                    <th>Heure Début</th>
+                    <th>Heure Fin</th>
+                    <th>Nombre d'Heures</th>
+                    <th>Observations</th>
+                    <th>Domaine de Recherche</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for consultation in fiche.consultations.all %}
+                    <tr>
+                        <td>{{ consultation.get_type_consultation_display }}</td>
+                        <td>{{ consultation.date }}</td>
+                        <td>{{ consultation.cote_livre }}</td>
+                        <td>{{ consultation.no_inventaire_livre }}</td>
+                        <td>{{ consultation.heure_debut }}</td>
+                        <td>{{ consultation.heure_fin }}</td>
+                        <td>{{ consultation.nombre_heures }}</td>
+                        <td>{{ consultation.observations }}</td>
+                        <td>{{ consultation.domaine_recherche }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucune consultation enregistrée pour cette fiche.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

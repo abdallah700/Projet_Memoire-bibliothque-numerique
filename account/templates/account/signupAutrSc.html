@@ -1,0 +1,23 @@
+{% extends 'account/base.html' %}
+
+{% block title %}Sign Up Autres Personnes Scientifiques{% endblock %}
+
+{% block header %}Sign Up Page{% endblock %}
+    
+
+{% block content %} 
+<!-- contenu de visiteur.html -->
+<h3>Inscription Autres Personnes Scientifiques</h3>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="d-flex justify-content-end mt-3">
+    <button type="submit" class="btn btn-primary">Add</button>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      {{ AutreSc_form.as_table }}
+    </table>
+  </div>
+</form>
+
+{% endblock %}

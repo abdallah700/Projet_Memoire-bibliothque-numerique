@@ -1,0 +1,23 @@
+{% extends 'account/base.html' %}
+
+{% block title %}Faculté{% endblock %}
+
+{% block header %}Faculte Page{% endblock %}
+    
+
+{% block content %} 
+<!-- contenu de visiteur.html -->
+<h3>Add Faculte</h3>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="table-responsive">
+    <div class="d-flex justify-content-end mt-3">
+        <button type="submit" class="btn btn-primary">Add</button>
+    </div>
+    <table class="table">
+      {{ Faculte_form.as_table }}
+    </table>
+  </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+
+
+<h1>Importer des données CoteLivre</h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="cotes_livre">Import Cotes Livres:</label>
+    <input type="file" name="my_file" />  <!-- Mettez à jour le nom du champ ici -->
+    <button type="submit">Upload</button>
+</form>
+<hr>
+
