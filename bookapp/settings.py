@@ -1,8 +1,17 @@
 import os
 from pathlib import Path
+import environ
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Initialise l'environnement
+env = environ.Env(
+    DEBUG=(bool, False)
+)
+
+# Lis le fichier .env à la racine du projet
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
@@ -13,12 +22,10 @@ STATIC_DIR=os.path.join(BASE_DIR,'static')
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=_!dja1)@@yk!=fw!=5fp2$rs_)678g@+5#)((d0t&#9t^1mn8'
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG')
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -77,10 +84,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': env.db(default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
 
 
@@ -129,18 +133,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
-
 
 STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'bookstore.User'
 
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
+STATIC_ROOT = BASE_DIR / 'staticfiles'      # emplacement où collectstatic place les fichiers
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',                     # projet/static (optionnel)
+    # BASE_DIR / 'bookstore' / 'static'      # généralement pas nécessaire
+]
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
